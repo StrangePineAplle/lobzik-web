@@ -23,53 +23,61 @@
   </style>
 </head>
 <body>
-  <h1>Запись на индивидуальный курс</h1>
-
-  <label for="datetime">Выберите дату и время:</label>
-  <input type="datetime-local" id="datetime">
-
-  <label for="fio">ФИО:</label>
-  <input type="text" id="fio" placeholder="Введите ваше имя">
-
-  <label for="phone">Телефон:</label>
-  <input type="tel" id="phone" placeholder="+7 (___) ___-__-__">
-
-  <button onclick="submitForm()">Оплатить</button>
-
-  <div class="status" id="status"></div>
-
-  <script>
-    const tg = window.Telegram.WebApp;
-    const user_id = tg.initDataUnsafe?.user?.id || 'unknown';
-
-    async function submitForm() {
-      const fio = document.getElementById('fio').value;
-      const phone = document.getElementById('phone').value;
-      const datetime = document.getElementById('datetime').value.split("T"); // Разделяем на дату и время
-      const date = datetime[0];
-      const time = datetime[1];
-
-      const response = await fetch('/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          тип: 'индивидульный курс',
-          фио,
-          телефон: phone,
-          дата: date,
-          время: time,
-          оплата: "оплачено",
-          сертефикат: "нет",
-          tg_id: user_id
-        })
-      });
-
-      const result = await response.text();
-      document.getElementById('status').textContent = result;
-      tg.close(); // закрыть WebApp после отправки
-    }
-
-    tg.ready(); // говорим Telegram, что всё загружено
-  </script>
-</body>
+    <h1>Запись на индивидуальный курс</h1>
+  
+    <label for="fio">ФИО:</label>
+    <input type="text" id="fio" placeholder="Введите ваше имя" required>
+  
+    <label for="phone">Телефон:</label>
+    <input type="tel" id="phone" placeholder="+7 (___) ___-__-__" required>
+  
+    <button onclick="submitForm()">Оплатить</button>
+  
+    <div class="status" id="status"></div>
+  
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+      const tg = window.Telegram.WebApp;
+      const user_id = tg.initDataUnsafe?.user?.id || 'unknown';
+  
+      // Извлекаем дату и время из URL
+      const params = new URLSearchParams(window.location.search);
+      const date = params.get('дата');
+      const time = params.get('время');
+  
+      async function submitForm() {
+        const fio = document.getElementById('fio').value;
+        const phone = document.getElementById('phone').value;
+  
+        if (!fio || !phone || !date || !time) {
+          document.getElementById('status').textContent = "Заполните все поля.";
+          return;
+        }
+  
+        const response = await fetch('/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            тип: 'индивидульный курс',
+            фио: fio,
+            телефон: phone,
+            дата: date,
+            время: time,
+            оплата: "ожидает оплаты", // <--- статус изменён
+            сертефикат: "нет",
+            tg_id: user_id
+          })
+        });
+  
+        const result = await response.text();
+        document.getElementById('status').textContent = result;
+  
+        tg.close();
+      }
+  
+      tg.ready();
+    </script>
+  </body>
+  
+  
 </html>
