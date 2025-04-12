@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Тестовое приложение</title>
     <style>
         * {
             margin: 0;
@@ -20,7 +20,6 @@
             width: 100%;
             padding: 25px;
             text-align: center;
-
         }
 
         h1 {
@@ -75,9 +74,9 @@
         <button class="btn f-btn">Тест отправки данных</button>
     </div>
     <form class="test-form">    
-        <input type="text" placeholder="Введите заголовок" class="title-inp">
-        <input type="text" placeholder="Введите описание" class="desc-inp">
-        <input type="text" placeholder="Введите текст" class="text-inp">
+        <input type="text" placeholder="Введите ФИО" class="full-name-inp">
+        <input type="text" placeholder="Введите телефон" class="phone-inp">
+        <input type="email" placeholder="Введите email" class="email-inp">
         <button class="btn s-btn">Отправить</button>
     </form>
 
@@ -95,15 +94,14 @@
         });
 
         sBtn.addEventListener("click", () => {
-            let title = document.getElementsByClassName("title-inp")[0];
-            let description = document.getElementsByClassName("desc-inp")[0];
-            let text = document.getElementsByClassName("text-inp")[0];
+            let fullName = document.getElementsByClassName("full-name-inp")[0].value;
+            let phone = document.getElementsByClassName("phone-inp")[0].value;
+            let email = document.getElementsByClassName("email-inp")[0].value;
 
-            
             let data = {
-                title: title.value,
-                desc: description.value,    
-                text: text.value
+                full_name: fullName,
+                phone: phone,
+                email: email
             }
 
             tg.sendData(JSON.stringify(data));
