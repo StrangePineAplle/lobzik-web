@@ -1,111 +1,71 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тестовое приложение</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            color: var(--tg-theme-text-color);
-            background: var(--tg-theme-bg-color);
-        }
-
-        .Main {
-            width: 100%;
-            padding: 25px;
-            text-align: center;
-        }
-
-        h1 {
-            margin-top: 40px;
-            margin-bottom: 10px;
-        }
-
-        img {
-            width: 70px;
-            margin: 30px auto;
-        }
-
-        .btn {
-            border: 0;
-            border-radius: 5px;
-            margin-top: 50px;
-            height: 60px;
-            width: 200px;
-            font-style: 20px;
-            font-weight: 500;
-            cursor: pointer;
-            color: var(--tg-theme-button-text-color);
-            background: var(--tg-theme-button-color);
-        }
-
-        form {
-            display: none;
-            text-align: center;
-        }
-        
-        input {
-            outline: none;
-            border-radius: 5px;
-            border: 2px solid #535353;
-            padding: 15px 10px;
-            margin: 10px 0 0;
-            background: var(--tg-theme-section-separator-color);
-            color: var(--tg-theme-text-color);
-            transition: all .2s;
-        }
-        
-        input:focus {
-            border-color: var(--tg-theme-secondary-bg-color)
-        }
-        
-    </style>
-</head>
 <body>
     <div class="Main">
-        <h1>Тестовое приложение</h1>
-        <p></p>
-        <button class="btn f-btn">Тест отправки данных</button>
+        <h1>Выберите мероприятие</h1>
+        <select class="event-select"></select>
+        <button class="btn select-event-btn">Выбрать</button>
     </div>
-    <form class="test-form">    
+
+    <form class="test-form" style="display:none;">
         <input type="text" placeholder="Введите ФИО" class="full-name-inp">
         <input type="text" placeholder="Введите телефон" class="phone-inp">
         <input type="email" placeholder="Введите email" class="email-inp">
-        <button class="btn s-btn">Отправить</button>
+        <button type="button" class="btn s-btn">Отправить</button>
     </form>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
     <script>
-        let tg = window.Telegram.WebApp;
+        const tg = window.Telegram.WebApp;
 
-        let fBtn = document.getElementsByClassName("f-btn")[0]
-        let sBtn = document.getElementsByClassName("s-btn")[0]
+        const type = new URLSearchParams(window.location.search).get("type"); // event, intense и т.д.
+        const eventSelect = document.querySelector(".event-select");
+        const selectBtn = document.querySelector(".select-event-btn");
+        const form = document.querySelector(".test-form");
 
-        fBtn.addEventListener("click", () => {
-            document.getElementsByClassName("Main")[0].style.display = "none";
-            document.getElementsByClassName("test-form")[0].style.display = "block";
+        let selectedEventId = null;
+
+        fetch(`http://localhost:5000/api/${type}`)
+            .then(res => res.json())
+            .then(events => {
+                for (let event of events) {
+                    const option = document.createElement("option");
+                    option.value = event.id;
+                    option.textContent = `${event.date} ${event.time} — ${event.name} (${event.remaining_seats} мест)`;
+                    eventSelect.appendChild(option);
+                }
+            });
+
+        selectBtn.addEventListener("click", () => {
+            selectedEventId = eventSelect.value;
+            document.querySelector(".Main").style.display = "none";
+            form.style.display = "block";
         });
 
-        sBtn.addEventListener("click", () => {
-            let fullName = document.getElementsByClassName("full-name-inp")[0].value;
-            let phone = document.getElementsByClassName("phone-inp")[0].value;
-            let email = document.getElementsByClassName("email-inp")[0].value;
+        document.querySelector(".s-btn").addEventListener("click", () => {
+            const fullName = document.querySelector(".full-name-inp").value;
+            const phone = document.querySelector(".phone-inp").value;
+            const email = document.querySelector(".email-inp").value;
 
-            let data = {
+            const userData = {
+                tg_id: tg.initDataUnsafe.user.id,
+                tg_username: tg.initDataUnsafe.user.username,
                 full_name: fullName,
                 phone: phone,
-                email: email
-            }
+                email: email,
+                event_id: selectedEventId
+            };
 
-            tg.sendData(JSON.stringify(data));
+            fetch(`http://localhost:5000/api/register/${type}`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(userData)
+            }).then(res => res.json())
+              .then(response => {
+                if (response.success) {
+                    tg.close();
+                } else {
+                    alert("Ошибка при регистрации");
+                }
+            });
         });
     </script>
 </body>
-</html>
