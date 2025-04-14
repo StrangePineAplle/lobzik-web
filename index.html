@@ -84,6 +84,10 @@
 
     <script>
         let tg = window.Telegram.WebApp;
+
+        // Получаем название мероприятия из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const event_id = urlParams.get('event_name');
     
         let fBtn = document.getElementsByClassName("f-btn")[0]
         let sBtn = document.getElementsByClassName("s-btn")[0]
@@ -102,7 +106,8 @@
             let data = {
                 full_name: fullName,
                 user_phone: phone,  // Используем правильное имя поля для телефона
-                user_email: email   // Используем правильное имя поля для email
+                user_email: email,   // Используем правильное имя поля для email
+                event_id: event_id  // Добавляем название мероприятия
             };
     
             // Отправляем данные в Telegram
