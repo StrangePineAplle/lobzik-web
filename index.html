@@ -84,31 +84,28 @@
 
     <script>
         let tg = window.Telegram.WebApp;
-    
+
         let fBtn = document.getElementsByClassName("f-btn")[0]
         let sBtn = document.getElementsByClassName("s-btn")[0]
-    
+
         fBtn.addEventListener("click", () => {
             document.getElementsByClassName("Main")[0].style.display = "none";
             document.getElementsByClassName("test-form")[0].style.display = "block";
         });
-    
+
         sBtn.addEventListener("click", () => {
             let fullName = document.getElementsByClassName("full-name-inp")[0].value;
             let phone = document.getElementsByClassName("phone-inp")[0].value;
             let email = document.getElementsByClassName("email-inp")[0].value;
-    
-            // Добавим в объект необходимые данные
+
             let data = {
                 full_name: fullName,
-                user_phone: phone,  // Используем правильное имя поля для телефона
-                user_email: email   // Используем правильное имя поля для email
-            };
-    
-            // Отправляем данные в Telegram
+                phone: phone,
+                email: email
+            }
+
             tg.sendData(JSON.stringify(data));
         });
     </script>
-    
 </body>
 </html>
