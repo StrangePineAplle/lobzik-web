@@ -49,7 +49,7 @@
             display: none;
             text-align: center;
         }
-
+        
         input {
             outline: none;
             border-radius: 5px;
@@ -60,11 +60,11 @@
             color: var(--tg-theme-text-color);
             transition: all .2s;
         }
-
+        
         input:focus {
             border-color: var(--tg-theme-secondary-bg-color)
         }
-
+        
     </style>
 </head>
 <body>
@@ -73,39 +73,42 @@
         <p></p>
         <button class="btn f-btn">Тест отправки данных</button>
     </div>
-
-    <form class="test-form">
+    <form class="test-form">    
         <input type="text" placeholder="Введите ФИО" class="full-name-inp">
         <input type="text" placeholder="Введите телефон" class="phone-inp">
         <input type="email" placeholder="Введите email" class="email-inp">
-        <button class="btn s-btn" type="button">Отправить</button>
+        <button class="btn s-btn">Отправить</button>
     </form>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
     <script>
         let tg = window.Telegram.WebApp;
-
-        let fBtn = document.querySelector(".f-btn");
-        let sBtn = document.querySelector(".s-btn");
-
+    
+        let fBtn = document.getElementsByClassName("f-btn")[0]
+        let sBtn = document.getElementsByClassName("s-btn")[0]
+    
         fBtn.addEventListener("click", () => {
-            document.querySelector(".Main").style.display = "none";
-            document.querySelector(".test-form").style.display = "block";
+            document.getElementsByClassName("Main")[0].style.display = "none";
+            document.getElementsByClassName("test-form")[0].style.display = "block";
         });
-
+    
         sBtn.addEventListener("click", () => {
-            let fullName = document.querySelector(".full-name-inp").value;
-            let phone = document.querySelector(".phone-inp").value;
-            let email = document.querySelector(".email-inp").value;
-
+            let fullName = document.getElementsByClassName("full-name-inp")[0].value;
+            let phone = document.getElementsByClassName("phone-inp")[0].value;
+            let email = document.getElementsByClassName("email-inp")[0].value;
+    
+            // Добавим в объект необходимые данные
             let data = {
                 full_name: fullName,
-                phone: phone,
-                email: email
+                user_phone: phone,  // Используем правильное имя поля для телефона
+                user_email: email   // Используем правильное имя поля для email
             };
-
+    
+            // Отправляем данные в Telegram
             tg.sendData(JSON.stringify(data));
         });
     </script>
+    
 </body>
 </html>
