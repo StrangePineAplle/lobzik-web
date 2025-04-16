@@ -1,142 +1,144 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Лобзик</title>
-    <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Лобзик — Запись</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
 
-body {
-    font-family: "Arial", sans-serif;
-    background: #fdfaf7; /* тёплый почти белый фон */
-    color: #5e2b1f; /* глубокий коричневый для текста */
-    padding: 30px;
-}
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-.Main {
-    width: 100%;
-    max-width: 700px;
-    margin: auto;
-    padding: 40px;
-    border: 1px solid #b19784;
-    background-color: #fffdf8;
-    text-align: center;
-    box-shadow: 0 0 8px rgba(94, 43, 31, 0.05);
-}
+    body {
+      font-family: 'Playfair Display', serif;
+      background: #fdfaf7;
+      color: #5e2b1f;
+      padding: 30px;
+    }
 
-h1 {
-    font-size: 22px;
-    margin-top: 20px;
-    margin-bottom: 30px;
-    color: #5e2b1f;
-    font-weight: normal;
-}
+    .Main, form {
+      width: 100%;
+      max-width: 700px;
+      margin: auto;
+      padding: 40px;
+      border: 1px solid #b19784;
+      background-color: #fffdf8;
+      text-align: center;
+      box-shadow: 0 0 8px rgba(94, 43, 31, 0.05);
+      border-radius: 12px;
+    }
 
-img {
-    width: 70px;
-    margin: 30px auto;
-}
+    h1 {
+      font-size: 26px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      color: #5e2b1f;
+      font-weight: normal;
+    }
 
-.btn {
-    border: none;
-    border-radius: 4px;
-    margin-top: 40px;
-    height: 50px;
-    width: 200px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    background: #5e2b1f; /* насыщенный коричневый */
-    color: #fff8f0;
-    text-transform: uppercase;
-    box-shadow: 0 2px 4px rgba(94, 43, 31, 0.2);
-}
+    p {
+      font-size: 16px;
+      margin-bottom: 20px;
+      color: #7a5541;
+    }
 
-form {
-    display: none;
-    text-align: left;
-    width: 100%;
-    max-width: 700px;
-    margin: auto;
-    padding: 40px;
-    border: 1px solid #b19784;
-    background: #fffdf8;
-    box-shadow: 0 0 8px rgba(94, 43, 31, 0.05);
-}
+    img.logo {
+      width: 280px;
+      margin-bottom: 20px;
+    }
 
-input {
-    width: 100%;
-    display: block;
-    outline: none;
-    border-radius: 4px;
-    border: 1px solid #b19784;
-    padding: 12px;
-    margin: 15px 0;
-    background: #fffaf0; /* светлый фон поля */
-    color: #5e2b1f;
-    font-size: 15px;
-    transition: border-color 0.2s;
-}
+    .btn {
+      border: none;
+      border-radius: 8px;
+      margin-top: 30px;
+      height: 50px;
+      width: 220px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      background: linear-gradient(to bottom, #6e3a27, #4b2418);
+      color: #fff8f0;
+      text-transform: uppercase;
+      box-shadow: 0 4px 8px rgba(94, 43, 31, 0.25);
+      transition: transform 0.1s ease;
+    }
 
-input:focus {
-    border-color: #5e2b1f;
-}
+    .btn:hover {
+      transform: translateY(-2px);
+    }
 
+    form {
+      display: none;
+      text-align: left;
+    }
 
+    input {
+      width: 100%;
+      display: block;
+      outline: none;
+      border-radius: 6px;
+      border: 1px solid #b19784;
+      padding: 14px;
+      margin: 18px 0;
+      background: #fffaf0;
+      color: #5e2b1f;
+      font-size: 15px;
+      transition: border-color 0.2s;
+    }
 
-    </style>
+    input:focus {
+      border-color: #5e2b1f;
+    }
+  </style>
 </head>
 <body>
-    <div class="Main">
-        <h1>Лобзик</h1>
-        <p></p>
-        <button class="btn f-btn">Зарегестрироваться</button>
-    </div>
-    <form class="test-form">    
-        <input type="text" placeholder="Введите ФИО" class="full-name-inp">
-        <input type="text" placeholder="Введите телефон" class="phone-inp">
-        <input type="email" placeholder="Введите email" class="email-inp">
-        <button class="btn s-btn">Отправить</button>
-    </form>
 
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <div class="Main">
+    <img src="image/saw.png" alt="Лобзик" class="logo" />
+    <h1>Мастерская «Лобзик»</h1>
+    <p>Запишитесь на мастер-класс и получите незабываемый опыт творчества</p>
+    <button class="btn f-btn">Записаться</button>
+  </div>
 
-    <script>
-        let tg = window.Telegram.WebApp;
-        // Получаем название мероприятия из URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const event_id = urlParams.get('event_id');
-    
-        let fBtn = document.getElementsByClassName("f-btn")[0]
-        let sBtn = document.getElementsByClassName("s-btn")[0]
-    
-        fBtn.addEventListener("click", () => {
-            document.getElementsByClassName("Main")[0].style.display = "none";
-            document.getElementsByClassName("test-form")[0].style.display = "block";
-        });
-    
-        sBtn.addEventListener("click", () => {
-            let fullName = document.getElementsByClassName("full-name-inp")[0].value;
-            let phone = document.getElementsByClassName("phone-inp")[0].value;
-            let email = document.getElementsByClassName("email-inp")[0].value;
-    
-            // Добавим в объект необходимые данные
-            let data = {
-                full_name: fullName,
-                user_phone: phone,  // Используем правильное имя поля для телефона
-                user_email: email,   // Используем правильное имя поля для email
-                event_id: event_id  // Добавляем название мероприятия
-            };
-    
-            // Отправляем данные в Telegram
-            tg.sendData(JSON.stringify(data));
-        });
-    </script>
-    
+  <form class="test-form">    
+    <input type="text" placeholder="Введите ФИО" class="full-name-inp">
+    <input type="text" placeholder="Введите телефон" class="phone-inp">
+    <input type="email" placeholder="Введите email" class="email-inp">
+    <button class="btn s-btn">Отправить</button>
+  </form>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    let tg = window.Telegram.WebApp;
+    const urlParams = new URLSearchParams(window.location.search);
+    const event_id = urlParams.get('event_id');
+
+    let fBtn = document.getElementsByClassName("f-btn")[0];
+    let sBtn = document.getElementsByClassName("s-btn")[0];
+
+    fBtn.addEventListener("click", () => {
+      document.querySelector(".Main").style.display = "none";
+      document.querySelector(".test-form").style.display = "block";
+    });
+
+    sBtn.addEventListener("click", () => {
+      let fullName = document.querySelector(".full-name-inp").value;
+      let phone = document.querySelector(".phone-inp").value;
+      let email = document.querySelector(".email-inp").value;
+
+      let data = {
+        full_name: fullName,
+        user_phone: phone,
+        user_email: email,
+        event_id: event_id
+      };
+
+      tg.sendData(JSON.stringify(data));
+    });
+  </script>
 </body>
 </html>
