@@ -116,6 +116,7 @@
     let tg = window.Telegram.WebApp;
     const urlParams = new URLSearchParams(window.location.search);
     const event_id = urlParams.get('event_id');
+    const event_type = urlParams.get('event_type');
 
     let fBtn = document.getElementsByClassName("f-btn")[0];
     let sBtn = document.getElementsByClassName("s-btn")[0];
@@ -134,7 +135,8 @@
         full_name: fullName,
         user_phone: phone,
         user_email: email,
-        event_id: event_id
+        event_id: event_id,
+        event_type: event_type
       };
 
       tg.sendData(JSON.stringify(data));
