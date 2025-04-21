@@ -49,7 +49,7 @@
     img.logo {
       width: 280px;
       margin-bottom: 20px;
-      margin-left: -30px; /* Сдвиг логотипа на 5 пикселей влево */
+      margin-left: -30px;
     }
 
     .btn {
@@ -75,6 +75,12 @@
     form {
       display: none;
       text-align: left;
+    }
+
+    form h1 {
+      display: none;
+      text-align: center;
+      margin: 0 0 20px 0;
     }
 
     input {
@@ -105,7 +111,10 @@
     <button class="btn f-btn">Записаться</button>
   </div>
 
-  <form class="test-form">    
+  <form class="test-form">
+    <h1 class="event">Пожалуйста укажите свои данные</h1>
+    <h1 class="certificate">Пожалуйста укажите данные получателя сертификата (получатель - человек, которому собираетесь подарить сертификат)</h1>
+    
     <input type="text" placeholder="Введите ФИО" class="full-name-inp">
     <input type="text" placeholder="Введите телефон" class="phone-inp">
     <input type="email" placeholder="Введите email" class="email-inp">
@@ -124,7 +133,17 @@
 
     fBtn.addEventListener("click", () => {
       document.querySelector(".Main").style.display = "none";
-      document.querySelector(".test-form").style.display = "block";
+      const form = document.querySelector(".test-form");
+      form.style.display = "block";
+      
+      // Показываем нужный заголовок
+      if(event_type === 'certificate') {
+        form.querySelector('.certificate').style.display = 'block';
+        form.querySelector('.event').style.display = 'none';
+      } else {
+        form.querySelector('.event').style.display = 'block';
+        form.querySelector('.certificate').style.display = 'none';
+      }
     });
 
     sBtn.addEventListener("click", () => {
