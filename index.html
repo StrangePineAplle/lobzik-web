@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Лобзик — Запись</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+  <link rel="icon" href="image/ico.ico" type="image/x-icon">
 
   <style>
     * {
@@ -100,6 +101,43 @@
     input:focus {
       border-color: #5e2b1f;
     }
+
+    .people-container {
+      margin: 18px 0;
+      display: none;
+    }
+
+    .people-container label {
+      display: block;
+      margin-bottom: 8px;
+      color: #7a5541;
+    }
+
+    .people-inp {
+      width: 100%;
+      margin: 0;
+      -webkit-appearance: none;
+      height: 8px;
+      background: #b19784;
+      border-radius: 4px;
+      outline: none;
+    }
+
+    .people-inp::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #5e2b1f;
+      cursor: pointer;
+    }
+
+    .people-value {
+      font-weight: bold;
+      color: #5e2b1f;
+      margin-left: 5px;
+    }
   </style>
 </head>
 <body>
@@ -118,6 +156,12 @@
     <input type="text" placeholder="Введите ФИО" class="full-name-inp">
     <input type="text" placeholder="Введите телефон" class="phone-inp">
     <input type="email" placeholder="Введите email" class="email-inp">
+    
+    <div class="people-container">
+      <label>Количество мест: <span class="people-value">1</span></label>
+      <input type="range" min="1" value="1" class="people-inp">
+    </div>
+    
     <button class="btn s-btn">Отправить</button>
   </form>
 
@@ -127,22 +171,37 @@
     const urlParams = new URLSearchParams(window.location.search);
     const event_id = urlParams.get('event_id');
     const event_type = urlParams.get('event_type');
+    const max_numberOfPeople = urlParams.get('people');
 
     let fBtn = document.getElementsByClassName("f-btn")[0];
     let sBtn = document.getElementsByClassName("s-btn")[0];
+    const peopleContainer = document.querySelector('.people-container');
+    const peopleInput = document.querySelector('.people-inp');
+    const peopleValue = document.querySelector('.people-value');
+
+    // Инициализация ползунка
+    if(max_numberOfPeople && max_numberOfPeople !== 'None' && peopleInput) {
+      peopleInput.max = max_numberOfPeople;
+      peopleInput.addEventListener('input', function() {
+        peopleValue.textContent = this.value;
+      });
+    }
 
     fBtn.addEventListener("click", () => {
       document.querySelector(".Main").style.display = "none";
       const form = document.querySelector(".test-form");
       form.style.display = "block";
       
-      // Показываем нужный заголовок
+      // Управление отображением элементов
       if(event_type === 'certificate') {
         form.querySelector('.certificate').style.display = 'block';
         form.querySelector('.event').style.display = 'none';
+        peopleContainer.style.display = 'none';
       } else {
         form.querySelector('.event').style.display = 'block';
         form.querySelector('.certificate').style.display = 'none';
+        // Показываем ползунок только если max_numberOfPeople задано и не равно 'None'
+        peopleContainer.style.display = (max_numberOfPeople && max_numberOfPeople !== 'None') ? 'block' : 'none';
       }
     });
 
@@ -150,11 +209,15 @@
       let fullName = document.querySelector(".full-name-inp").value;
       let phone = document.querySelector(".phone-inp").value;
       let email = document.querySelector(".email-inp").value;
+      let people = event_type === 'certificate' ? 1 : 
+                  (max_numberOfPeople && max_numberOfPeople !== 'None' ? 
+                   document.querySelector(".people-inp").value : 1);
 
       let data = {
         full_name: fullName,
         user_phone: phone,
         user_email: email,
+        numberOfPeople: people,
         event_id: event_id,
         event_type: event_type
       };
