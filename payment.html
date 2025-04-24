@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Оплата заказа</title>
+  <script src="https://yookassa.ru/checkout-widget/v1/checkout-widget.js"></script>
+</head>
+<body>
+  <h1>Оплатить заказ</h1>
+  <button id="pay-button">Оплатить</button>
+  <script>
+    const widget = new YooMoneyCheckoutWidget({
+      confirmation_token: 'ВАШ_CONFIRMATION_TOKEN',
+      onComplete: () => window.alert('✅ Платёж успешен'),
+      onError:   (err) => window.alert('❌ Ошибка: ' + err),
+      customization: { modal: true }
+    });
+    document.getElementById('pay-button')
+            .addEventListener('click', () => widget.openModal());
+  </script>
+</body>
+</html>
