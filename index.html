@@ -73,6 +73,11 @@
       transform: translateY(-2px);
     }
 
+    .btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
     form {
       display: none;
       text-align: left;
@@ -285,9 +290,13 @@
       }
     });
 
-    sBtn.addEventListener("click", () => {
+    sBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      
       document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
       document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+
+      sBtn.disabled = true;
 
       let isValid = true;
       const inputs = {
@@ -316,26 +325,23 @@
         isValid = false;
       }
 
-      if (!isValid) return;
+      if (!isValid) {
+        sBtn.disabled = false;
+        return;
+      }
 
-      let fullName = inputs.name.value.trim();
-      let phone = inputs.phone.value;
-      let email = inputs.email.value;
-      let people = event_type === 'certificate' ? 1 : 
-                  (max_numberOfPeople && max_numberOfPeople !== 'None' ? 
-                   document.querySelector(".people-inp").value : 1);
-
-      let data = {
-        full_name: fullName,
-        user_phone: phone,
-        user_email: email,
-        numberOfPeople: people,
-        event_id: event_id,
-        event_type: event_type
+      const data = {
+        full_name: inputs.name.value.trim(),
+        user_phone: inputs.phone.value,
+        user_email: inputs.email.value,
+        numberOfPeople: event_type === 'certificate' ? 1 : 
+          (max_numberOfPeople && max_numberOfPeople !== 'None' ? 
+           document.querySelector(".people-inp").value : 1),
+        event_id,
+        event_type
       };
 
       tg.sendData(JSON.stringify(data));
-      tg.close();
     });
   </script>
 </body>
