@@ -126,13 +126,20 @@
       display: none;
     }
 
-    .people-container label {
+    .certificate-am-container {
+      margin: 12px 0;
+      display: none;
+    }
+
+    .people-container label,
+    .certificate-am-container label {
       display: block;
       margin-bottom: 8px;
       color: #7a5541;
     }
 
-    .people-inp {
+    .people-inp,
+    .certificate_amount {
       width: calc(100% - 4px);
       margin: 0 2px;
       -webkit-appearance: none;
@@ -144,11 +151,13 @@
       transition: background 0.3s ease;
     }
 
-    .people-inp:hover {
+    .people-inp:hover,
+    .certificate_amount:hover {
       background: #9e8471;
     }
 
-    .people-inp::-webkit-slider-thumb {
+    .people-inp::-webkit-slider-thumb,
+    .certificate_amount::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
       width: 32px;
@@ -166,12 +175,14 @@
       transform-origin: center;
     }
 
-    .people-inp::-webkit-slider-thumb:hover {
+    .people-inp::-webkit-slider-thumb:hover,
+    .certificate_amount::-webkit-slider-thumb:hover {
       transform: translateY(-50%) scale(1.5);
       background: #f5f5f5;
     }
 
-    .people-inp::-webkit-slider-runnable-track {
+    .people-inp::-webkit-slider-runnable-track,
+    .certificate_amount::-webkit-slider-runnable-track {
       width: 100%;
       height: 8px;
       cursor: pointer;
@@ -179,7 +190,8 @@
       border-radius: 25px;
     }
 
-    .people-inp::-moz-range-thumb {
+    .people-inp::-moz-range-thumb,
+    .certificate_amount::-moz-range-thumb {
       width: 32px;
       height: 32px;
       border-radius: 50%;
@@ -190,23 +202,27 @@
       transition: transform 0.2s ease, background 0.3s ease;
     }
 
-    .people-inp::-moz-range-track {
+    .people-inp::-moz-range-track,
+    .certificate_amount::-moz-range-track {
       background: #b19784;
       border-radius: 25px;
       height: 8px;
       transition: background 0.3s ease;
     }
 
-    .people-inp:hover::-moz-range-track {
+    .people-inp:hover::-moz-range-track,
+    .certificate_amount:hover::-moz-range-track {
       background: #9e8471;
     }
 
-    .people-inp::-moz-range-thumb:hover {
+    .people-inp::-moz-range-thumb:hover,
+    .certificate_amount::-moz-range-thumb:hover {
       transform: scale(1.5);
       background: #f5f5f5;
     }
 
-    .people-value {
+    .people-value,
+    .certificate-am-value {
       font-weight: bold;
       color: #5e2b1f;
       margin-left: 5px;
@@ -247,7 +263,12 @@
     
     <div class="people-container">
       <label>Количество мест: <span class="people-value">1</span></label>
-      <input type="range" min="1" value="1" class="people-inp">
+      <input type="range" min="1" max="10" value="1" class="people-inp">
+    </div>
+    
+    <div class="certificate-am-container">
+      <label>Номинал сертификата: <span class="certificate-am-value">1 000 ₽</span></label>
+      <input type="range" min="1000" max="10000" step="1000" value="1000" class="certificate_amount">
     </div>
     
     <button class="btn s-btn">Отправить</button>
@@ -266,11 +287,20 @@
     const peopleContainer = document.querySelector('.people-container');
     const peopleInput = document.querySelector('.people-inp');
     const peopleValue = document.querySelector('.people-value');
+    const certAmContainer = document.querySelector('.certificate-am-container');
+    const certAmInput = document.querySelector('.certificate_amount');
+    const certAmValue = document.querySelector('.certificate-am-value');
 
     if(max_numberOfPeople && max_numberOfPeople !== 'None' && peopleInput) {
       peopleInput.max = max_numberOfPeople;
       peopleInput.addEventListener('input', function() {
         peopleValue.textContent = this.value;
+      });
+    }
+
+    if(certAmInput) {
+      certAmInput.addEventListener('input', function() {
+        certAmValue.textContent = `${Number(this.value).toLocaleString()} ₽`;
       });
     }
 
@@ -283,10 +313,19 @@
         form.querySelector('.certificate').style.display = 'block';
         form.querySelector('.event').style.display = 'none';
         peopleContainer.style.display = 'none';
-      } else {
+        certAmContainer.style.display = 'none';
+      } 
+      else if(event_type === 'certificate_am') {
+        form.querySelector('.certificate').style.display = 'block';
+        form.querySelector('.event').style.display = 'none';
+        peopleContainer.style.display = 'none';
+        certAmContainer.style.display = 'block';
+      }
+      else {
         form.querySelector('.event').style.display = 'block';
         form.querySelector('.certificate').style.display = 'none';
         peopleContainer.style.display = (max_numberOfPeople && max_numberOfPeople !== 'None') ? 'block' : 'none';
+        certAmContainer.style.display = 'none';
       }
     });
 
@@ -334,11 +373,13 @@
         full_name: inputs.name.value.trim(),
         user_phone: inputs.phone.value,
         user_email: inputs.email.value,
-        numberOfPeople: event_type === 'certificate' ? 1 : 
+        numberOfPeople: event_type === 'certificate' || event_type === 'certificate_am' ? 1 : 
           (max_numberOfPeople && max_numberOfPeople !== 'None' ? 
            document.querySelector(".people-inp").value : 1),
-        event_id,
-        event_type
+        event_id: event_id,
+        event_type: event_type,
+        cert_nominal: event_type === 'certificate_am' ? 
+          Number(certAmInput.value)/1000 : null
       };
 
       tg.sendData(JSON.stringify(data));
