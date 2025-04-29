@@ -270,6 +270,13 @@
       display: block;
       margin: 30px auto 0;
     }
+
+    .single-seat-message {
+      color: #7a5541;
+      font-style: italic;
+      display: none;
+      margin-top: 8px;
+    }
   </style>
 </head>
 <body>
@@ -302,6 +309,7 @@
     <div class="people-container">
       <label>Количество мест: <span class="people-value">1</span></label>
       <input type="range" min="1" max="10" value="1" class="people-inp">
+      <div class="single-seat-message">Осталось 1 место</div>
     </div>
     
     <div class="certificate-am-container">
@@ -365,11 +373,18 @@
       return true;
     }
 
-    if(max_numberOfPeople && max_numberOfPeople !== 'None' && peopleInput) {
+    if (max_numberOfPeople && max_numberOfPeople !== 'None' && peopleInput) {
       peopleInput.max = max_numberOfPeople;
-      peopleInput.addEventListener('input', function() {
-        peopleValue.textContent = this.value;
-      });
+      
+      if (parseInt(max_numberOfPeople) === 1) {
+        document.querySelector('.single-seat-message').style.display = 'block';
+        peopleInput.style.display = 'none';
+        peopleValue.textContent = '1';
+      } else {
+        peopleInput.addEventListener('input', function() {
+          peopleValue.textContent = this.value;
+        });
+      }
     }
 
     fBtn.addEventListener("click", () => {
@@ -377,6 +392,9 @@
       const form = document.querySelector(".test-form");
       form.style.display = "block";
       
+      const isEventType = ['event', 'intensiv'].includes(event_type);
+      const showPeople = isEventType && max_numberOfPeople && max_numberOfPeople !== 'None';
+
       if(event_type === 'certificate') {
         form.querySelector('.certificate').style.display = 'block';
         form.querySelector('.event').style.display = 'none';
@@ -393,8 +411,18 @@
       else {
         form.querySelector('.event').style.display = 'block';
         form.querySelector('.certificate').style.display = 'none';
-        peopleContainer.style.display = (max_numberOfPeople && max_numberOfPeople !== 'None') ? 'block' : 'none';
+        peopleContainer.style.display = showPeople ? 'block' : 'none';
         certAmContainer.style.display = 'none';
+
+        if (showPeople) {
+          if (parseInt(max_numberOfPeople) === 1) {
+            document.querySelector('.single-seat-message').style.display = 'block';
+            peopleInput.style.display = 'none';
+          } else {
+            document.querySelector('.single-seat-message').style.display = 'none';
+            peopleInput.style.display = 'block';
+          }
+        }
       }
     });
 
