@@ -337,12 +337,6 @@
     const event_id = urlParams.get('event_id');
     const event_type = urlParams.get('event_type');
     const max_numberOfPeople = urlParams.get('people');
-    
-    // Get user data from URL parameters if available
-    const user_id = urlParams.get('user_id');
-    const user_name = urlParams.get('name');
-    const user_phone = urlParams.get('phone');
-    const user_email = urlParams.get('email');
 
     let fBtn = document.getElementsByClassName("f-btn")[0];
     let sBtn = document.getElementsByClassName("s-btn")[0];
@@ -369,27 +363,14 @@
 
     function validateCertInput() {
       const value = Number(certAmInput.value);
-      // Check if value is valid (multiple of 1000 and within range)
-      if(value % 1000 !== 0 || value < 1000 || value > 100000) {
+      if(value % 1000 !== 0 || value < 1000) {
         certAmInput.classList.add('error');
-        if (value > 100000) {
-          certError.textContent = "Сумма не может превышать 100 000 РУБ";
-        } else {
-          certError.textContent = "Сумма должна быть кратна 1000";
-        }
         certError.style.display = 'block';
         return false;
       }
       certAmInput.classList.remove('error');
       certError.style.display = 'none';
       return true;
-    }
-
-    // Add input event listener to certificate amount input
-    if (certAmInput) {
-      certAmInput.addEventListener('input', validateCertInput);
-      // Set max attribute
-      certAmInput.setAttribute('max', '100000');
     }
 
     if (max_numberOfPeople && max_numberOfPeople !== 'None' && peopleInput) {
@@ -414,23 +395,7 @@
       const isEventType = ['event', 'intensiv'].includes(event_type);
       const showPeople = isEventType && max_numberOfPeople && max_numberOfPeople !== 'None';
 
-      // Pre-fill user data if editing profile
-      if (event_type === 'edit_user_data' && user_id) {
-        const nameInput = document.querySelector(".full-name-inp");
-        const phoneInput = document.querySelector(".phone-inp");
-        const emailInput = document.querySelector(".email-inp");
-        
-        if (user_name) nameInput.value = decodeURIComponent(user_name);
-        if (user_phone) phoneInput.value = decodeURIComponent(user_phone);
-        if (user_email) emailInput.value = decodeURIComponent(user_email);
-        
-        form.querySelector('.event').style.display = 'block';
-        form.querySelector('.event').textContent = "Редактирование личных данных";
-        form.querySelector('.certificate').style.display = 'none';
-        peopleContainer.style.display = 'none';
-        certAmContainer.style.display = 'none';
-      }
-      else if(event_type === 'certificate') {
+      if(event_type === 'certificate') {
         form.querySelector('.certificate').style.display = 'block';
         form.querySelector('.event').style.display = 'none';
         peopleContainer.style.display = 'none';
