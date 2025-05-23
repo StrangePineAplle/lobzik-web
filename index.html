@@ -332,159 +332,191 @@
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script>
-    let tg = window.Telegram.WebApp;
-    const urlParams = new URLSearchParams(window.location.search);
-    const event_id = urlParams.get('event_id');
-    const event_type = urlParams.get('event_type');
-    const max_numberOfPeople = urlParams.get('people');
+      let tg = window.Telegram.WebApp;
+      const urlParams = new URLSearchParams(window.location.search);
+      const event_id = urlParams.get('event_id');
+      const event_type = urlParams.get('event_type');
+      const max_numberOfPeople = urlParams.get('people');
 
-    let fBtn = document.getElementsByClassName("f-btn")[0];
-    let sBtn = document.getElementsByClassName("s-btn")[0];
-    const peopleContainer = document.querySelector('.people-container');
-    const peopleInput = document.querySelector('.people-inp');
-    const peopleValue = document.querySelector('.people-value');
-    const certAmContainer = document.querySelector('.certificate-am-container');
-    const certAmInput = document.querySelector('.certificate_amount');
-    const certError = document.getElementById('cert-error');
-    const certIncBtn = document.querySelector('.certificate-inc');
-    const certDecBtn = document.querySelector('.certificate-dec');
+      let fBtn = document.getElementsByClassName("f-btn")[0];
+      let sBtn = document.getElementsByClassName("s-btn")[0];
+      const peopleContainer = document.querySelector('.people-container');
+      const peopleInput = document.querySelector('.people-inp');
+      const peopleValue = document.querySelector('.people-value');
+      const certAmContainer = document.querySelector('.certificate-am-container');
+      const certAmInput = document.querySelector('.certificate_amount');
+      const certError = document.getElementById('cert-error');
+      const certIncBtn = document.querySelector('.certificate-inc');
+      const certDecBtn = document.querySelector('.certificate-dec');
 
-    certIncBtn.addEventListener('click', () => {
-      certAmInput.stepUp();
-      validateCertInput();
-    });
-
-    certDecBtn.addEventListener('click', () => {
-      if(Number(certAmInput.value) > 1000) {
-        certAmInput.stepDown();
+      // Функция получения параметров URL для автозаполнения
+      function getUrlParams() {
+          const urlParams = new URLSearchParams(window.location.search);
+          return {
+              user_name: urlParams.get('user_name') || '',
+              user_phone: urlParams.get('user_phone') || '',
+              user_email: urlParams.get('user_email') || ''
+          };
       }
-      validateCertInput();
-    });
 
-    function validateCertInput() {
-      const value = Number(certAmInput.value);
-      if(value % 1000 !== 0 || value < 1000) {
-        certAmInput.classList.add('error');
-        certError.style.display = 'block';
-        return false;
-      }
-      certAmInput.classList.remove('error');
-      certError.style.display = 'none';
-      return true;
-    }
-
-    if (max_numberOfPeople && max_numberOfPeople !== 'None' && peopleInput) {
-      peopleInput.max = max_numberOfPeople;
-      
-      if (parseInt(max_numberOfPeople) === 1) {
-        document.querySelector('.single-seat-message').style.display = 'block';
-        peopleInput.style.display = 'none';
-        peopleValue.textContent = '1';
-      } else {
-        peopleInput.addEventListener('input', function() {
-          peopleValue.textContent = this.value;
-        });
-      }
-    }
-
-    fBtn.addEventListener("click", () => {
-      document.querySelector(".Main").style.display = "none";
-      const form = document.querySelector(".test-form");
-      form.style.display = "block";
-      
-      const isEventType = ['event', 'intensiv'].includes(event_type);
-      const showPeople = isEventType && max_numberOfPeople && max_numberOfPeople !== 'None';
-
-      if(event_type === 'certificate') {
-        form.querySelector('.certificate').style.display = 'block';
-        form.querySelector('.event').style.display = 'none';
-        peopleContainer.style.display = 'none';
-        certAmContainer.style.display = 'none';
-      } 
-      else if(event_type === 'certificate_am') {
-        form.querySelector('.certificate').style.display = 'block';
-        form.querySelector('.event').style.display = 'none';
-        peopleContainer.style.display = 'none';
-        certAmContainer.style.display = 'block';
-        certAmInput.value = 1000;
-      }
-      else {
-        form.querySelector('.event').style.display = 'block';
-        form.querySelector('.certificate').style.display = 'none';
-        peopleContainer.style.display = showPeople ? 'block' : 'none';
-        certAmContainer.style.display = 'none';
-
-        if (showPeople) {
-          if (parseInt(max_numberOfPeople) === 1) {
-            document.querySelector('.single-seat-message').style.display = 'block';
-            peopleInput.style.display = 'none';
-          } else {
-            document.querySelector('.single-seat-message').style.display = 'none';
-            peopleInput.style.display = 'block';
+      // Функция автозаполнения полей формы
+      function fillFormFields() {
+          const params = getUrlParams();
+          
+          if (params.user_name) {
+              document.querySelector('.full-name-inp').value = decodeURIComponent(params.user_name);
           }
-        }
-      }
-    });
-
-    sBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      
-      document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
-      document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
-
-      sBtn.disabled = true;
-
-      let isValid = true;
-      const inputs = {
-        name: document.querySelector(".full-name-inp"),
-        phone: document.querySelector(".phone-inp"),
-        email: document.querySelector(".email-inp")
-      };
-
-      if (!inputs.name.value.trim()) {
-        inputs.name.classList.add('error');
-        document.getElementById('name-error').style.display = 'block';
-        isValid = false;
+          if (params.user_phone) {
+              document.querySelector('.phone-inp').value = decodeURIComponent(params.user_phone);
+          }
+          if (params.user_email) {
+              document.querySelector('.email-inp').value = decodeURIComponent(params.user_email);
+          }
       }
 
-      const phoneRegex = /^\+?[0-9\s\-\(\)]{7,}$/;
-      if (!inputs.phone.value.match(phoneRegex)) {
-        inputs.phone.classList.add('error');
-        document.getElementById('phone-error').style.display = 'block';
-        isValid = false;
+      // Автозаполнение при загрузке страницы
+      document.addEventListener('DOMContentLoaded', () => {
+          fillFormFields();
+      });
+
+      certIncBtn.addEventListener('click', () => {
+          certAmInput.stepUp();
+          validateCertInput();
+      });
+
+      certDecBtn.addEventListener('click', () => {
+          if(Number(certAmInput.value) > 1000) {
+              certAmInput.stepDown();
+          }
+          validateCertInput();
+      });
+
+      function validateCertInput() {
+          const value = Number(certAmInput.value);
+          if(value % 1000 !== 0 || value < 1000) {
+              certAmInput.classList.add('error');
+              certError.style.display = 'block';
+              return false;
+          }
+          certAmInput.classList.remove('error');
+          certError.style.display = 'none';
+          return true;
       }
 
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!inputs.email.value.match(emailRegex)) {
-        inputs.email.classList.add('error');
-        document.getElementById('email-error').style.display = 'block';
-        isValid = false;
+      if (max_numberOfPeople && max_numberOfPeople !== 'None' && peopleInput) {
+          peopleInput.max = max_numberOfPeople;
+          
+          if (parseInt(max_numberOfPeople) === 1) {
+              document.querySelector('.single-seat-message').style.display = 'block';
+              peopleInput.style.display = 'none';
+              peopleValue.textContent = '1';
+          } else {
+              peopleInput.addEventListener('input', function() {
+                  peopleValue.textContent = this.value;
+              });
+          }
       }
 
-      if(event_type === 'certificate_am' && !validateCertInput()) {
-        isValid = false;
-      }
+      fBtn.addEventListener("click", () => {
+          document.querySelector(".Main").style.display = "none";
+          const form = document.querySelector(".test-form");
+          form.style.display = "block";
+          
+          const isEventType = ['event', 'intensiv'].includes(event_type);
+          const showPeople = isEventType && max_numberOfPeople && max_numberOfPeople !== 'None';
 
-      if (!isValid) {
-        sBtn.disabled = false;
-        return;
-      }
+          if(event_type === 'certificate') {
+              form.querySelector('.certificate').style.display = 'block';
+              form.querySelector('.event').style.display = 'none';
+              peopleContainer.style.display = 'none';
+              certAmContainer.style.display = 'none';
+          } 
+          else if(event_type === 'certificate_am') {
+              form.querySelector('.certificate').style.display = 'block';
+              form.querySelector('.event').style.display = 'none';
+              peopleContainer.style.display = 'none';
+              certAmContainer.style.display = 'block';
+              certAmInput.value = 1000;
+          }
+          else {
+              form.querySelector('.event').style.display = 'block';
+              form.querySelector('.certificate').style.display = 'none';
+              peopleContainer.style.display = showPeople ? 'block' : 'none';
+              certAmContainer.style.display = 'none';
 
-      const data = {
-        full_name: inputs.name.value.trim(),
-        user_phone: inputs.phone.value,
-        user_email: inputs.email.value,
-        numberOfPeople: event_type === 'certificate' || event_type === 'certificate_am' ? 1 : 
-          (max_numberOfPeople && max_numberOfPeople !== 'None' ? 
-           document.querySelector(".people-inp").value : 1),
-        event_id: event_id,
-        event_type: event_type,
-        cert_nominal: event_type === 'certificate_am' ? 
-          Number(certAmInput.value)/1000 : null
-      };
+              if (showPeople) {
+                  if (parseInt(max_numberOfPeople) === 1) {
+                      document.querySelector('.single-seat-message').style.display = 'block';
+                      peopleInput.style.display = 'none';
+                  } else {
+                      document.querySelector('.single-seat-message').style.display = 'none';
+                      peopleInput.style.display = 'block';
+                  }
+              }
+          }
+      });
 
-      tg.sendData(JSON.stringify(data));
-    });
+      sBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          
+          document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+          document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+
+          sBtn.disabled = true;
+
+          let isValid = true;
+          const inputs = {
+              name: document.querySelector(".full-name-inp"),
+              phone: document.querySelector(".phone-inp"),
+              email: document.querySelector(".email-inp")
+          };
+
+          if (!inputs.name.value.trim()) {
+              inputs.name.classList.add('error');
+              document.getElementById('name-error').style.display = 'block';
+              isValid = false;
+          }
+
+          // Упрощенная валидация телефона: только цифры и длина до 15 символов
+          const phoneValue = inputs.phone.value.replace(/\D/g, ''); // Убираем все нецифровые символы
+          if (phoneValue.length === 0 || phoneValue.length > 15) {
+              inputs.phone.classList.add('error');
+              document.getElementById('phone-error').style.display = 'block';
+              isValid = false;
+          }
+
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!inputs.email.value.match(emailRegex)) {
+              inputs.email.classList.add('error');
+              document.getElementById('email-error').style.display = 'block';
+              isValid = false;
+          }
+
+          if(event_type === 'certificate_am' && !validateCertInput()) {
+              isValid = false;
+          }
+
+          if (!isValid) {
+              sBtn.disabled = false;
+              return;
+          }
+
+          const data = {
+              full_name: inputs.name.value.trim(),
+              user_phone: inputs.phone.value,
+              user_email: inputs.email.value,
+              numberOfPeople: event_type === 'certificate' || event_type === 'certificate_am' ? 1 : 
+                  (max_numberOfPeople && max_numberOfPeople !== 'None' ? 
+                  document.querySelector(".people-inp").value : 1),
+              event_id: event_id,
+              event_type: event_type,
+              cert_nominal: event_type === 'certificate_am' ? 
+                  Number(certAmInput.value)/1000 : null
+          };
+
+          tg.sendData(JSON.stringify(data));
+      });
   </script>
+
 </body>
 </html>
