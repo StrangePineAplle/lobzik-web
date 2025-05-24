@@ -511,7 +511,7 @@
               event_id: event_id,
               event_type: event_type,
               cert_nominal: event_type === 'certificate_am' ? 
-                  Number(certAmInput.value)/1000 : null
+                  Math.max(1, Number(certAmInput.value) / 1000) : null
           };
 
           tg.sendData(JSON.stringify(data));
